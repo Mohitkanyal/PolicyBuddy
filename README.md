@@ -20,7 +20,6 @@ Insurance policies are often complex and difficult for the average customer to u
 ✅ Verify if an agent’s explanation is misleading or incomplete  
 ✅ Simulate whether a user-described claim is likely to be accepted or rejected  
 ✅ Exclusion detector that flags risky terms or hidden limitations  
-✅ (Optional) Translate policy information into regional languages (coming soon)
 
 ---
 
@@ -37,7 +36,7 @@ Insurance policies are often complex and difficult for the average customer to u
 ## ⚙️ How to Run Locally
 
 1. Clone this repository:
-git clone https://github.com/your-username/policybuddy.git
+git clone https://github.com/MohitKanyal/policybuddy.git
 cd policybuddy
 2. Clone this repository:
 python -m venv venv
