@@ -1,7 +1,9 @@
 from modules.openrouter_llm import ask_openrouter
+from modules.utils import is_valid_policy_text
 
 def ask_question(policy_text: str, question: str) -> str:
-
+    if not is_valid_policy_text(policy_text):
+        return "⚠️ This document doesn't appear to be a valid insurance policy. Please upload a proper policy PDF."
     prompt = (
         "You are an expert insurance assistant.\n\n"
         "The following is the content of an insurance policy:\n"
