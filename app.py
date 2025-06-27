@@ -138,6 +138,6 @@ with tabs[4]:
 # Footer
 st.markdown("""
 ---
-📁 View on [GitHub](https://github.com/your-username/policybuddy) | © 2025 PolicyBuddy+ 
+📁 View on [GitHub](https://github.com/Mohitkanyal/PolicyBuddy) | © 2025 PolicyBuddy+ 
 _Disclaimer: All responses are AI-generated. Verify with your insurer before making decisions._
 """)
