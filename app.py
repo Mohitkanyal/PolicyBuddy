@@ -7,7 +7,6 @@ from modules.claim_simulator import simulate_claim
 from modules.exclusion_detector import detect_exclusions
 from modules.utils import is_valid_policy_text
 
-
 st.set_page_config(page_title="PolicyBuddy+", page_icon="🤝", layout="centered")
 
 st.markdown("""
@@ -23,79 +22,122 @@ st.markdown("""
         margin-bottom: 1rem;
         color: #0A4D68;
     }
+    footer {visibility: hidden;}
     </style>
 """, unsafe_allow_html=True)
 
 st.markdown("<div class='main-title'>🤝 PolicyBuddy+<br><span style='font-size: 1.2rem;'>Your GenAI Insurance Assistant</span></div>", unsafe_allow_html=True)
 
+# Initialize session state for uploaded file
+if "uploaded_file" not in st.session_state:
+    st.session_state.uploaded_file = None
+
 with st.expander("📥 Upload your Insurance Policy (PDF)", expanded=True):
     uploaded_file = st.file_uploader("Choose a policy file", type="pdf")
+    if uploaded_file is not None:
+        st.session_state.uploaded_file = uploaded_file
+
+    # Try a sample demo file
+    with open("data/sample_policy.pdf", "rb") as f:
+        st.download_button("📄 Try a demo policy file", data=f, file_name="sample_policy.pdf", mime="application/pdf")
+
+    # Clear uploaded file
+    if st.button("🔄 Clear uploaded policy"):
+        st.session_state.uploaded_file = None
+        st.experimental_rerun()
+
     policy_text = ""
-    if uploaded_file:
-        policy_text = extract_text_from_pdf(uploaded_file)
-    if not is_valid_policy_text(policy_text):
-        st.warning("⚠️ This PDF does not look like an insurance policy. Please check the file.")
-    else:
-        st.success("✅ Policy document uploaded and parsed!")
+    if st.session_state.uploaded_file:
+        policy_text = extract_text_from_pdf(st.session_state.uploaded_file)
+        if not is_valid_policy_text(policy_text):
+            st.warning("⚠️ This PDF does not look like an insurance policy. Please check the file.")
+        else:
+            st.success("✅ Policy document uploaded and parsed!")
 
-
-tab1, tab2, tab3, tab4, tab5 = st.tabs([
+# Tabs
+tabs = st.tabs([
     "📄 Summary",
     "💬 Ask AI",
     "🔎 Verify Agent Claim",
-    "🧪 Claim Simulator",
-    "🚫 Exclusion Detector"
+    "🤪 Claim Simulator",
+    "❌ Exclusion Detector"
 ])
 
-with tab1:
+# Tab 1: Summary
+with tabs[0]:
     st.subheader("📃 Generate a Policy Summary")
-    if st.button("🧾 Generate Summary"):
+    if st.button("🦾 Generate Summary"):
         if policy_text:
             with st.spinner("Generating summary..."):
                 summary = generate_summary(policy_text)
                 st.info(summary)
+                st.caption("⚠️ This summary is AI-generated. Verify with your insurer.")
+                if st.radio("Was this helpful?", ("👍 Yes", "👎 No"), horizontal=True):
+                    st.write("✅ Thank you for your feedback!")
         else:
             st.warning("Please upload a policy PDF first.")
 
-with tab2:
+# Tab 2: Ask AI
+with tabs[1]:
     st.subheader("🤖 Ask a Question About Your Policy")
-    user_question = st.text_input("What would you like to know?")
+    question = st.text_input("What would you like to know?")
     if st.button("💡 Get Answer"):
-        if user_question and policy_text:
-            with st.spinner("Getting answer..."):
-                answer = ask_question(policy_text, user_question)
+        if question and policy_text:
+            with st.spinner("Thinking..."):
+                answer = ask_question(policy_text, question)
                 st.success(answer)
+                st.caption("⚠️ AI-generated. Please cross-check with your provider.")
+                if st.radio("Was this helpful?", ("👍 Yes", "👎 No"), horizontal=True):
+                    st.write("✅ Thank you for your feedback!")
         else:
             st.warning("Upload the policy and enter your question.")
 
-with tab3:
+# Tab 3: Verify Agent Claim
+with tabs[2]:
     st.subheader("🔍 Agent Explanation Verifier")
     agent_text = st.text_area("Paste what the agent told you about the policy")
     if st.button("🚨 Verify Explanation"):
         if agent_text and policy_text:
-            with st.spinner("Verifying..."):
+            with st.spinner("Verifying explanation..."):
                 result = verify_explanation(policy_text, agent_text)
                 st.warning(result)
+                st.caption("⚠️ Cross-check with the insurer before decisions.")
+                if st.radio("Was this helpful?", ("👍 Yes", "👎 No"), horizontal=True):
+                    st.write("✅ Thank you for your feedback!")
         else:
-            st.warning("Please upload the policy and enter the agent’s explanation.")
+            st.warning("Please upload the policy and agent explanation.")
 
-with tab4:
-    st.subheader("🧪 Claim Scenario Simulator")
-    scenario = st.text_area("Describe your situation (e.g., dengue hospitalization claim)", key="scenario_input")
+# Tab 4: Claim Simulator
+with tabs[3]:
+    st.subheader("🤪 Claim Scenario Simulator")
+    scenario = st.text_area("Describe your situation (e.g., dengue hospitalization)")
     if st.button("📊 Evaluate Claim"):
         if scenario and policy_text:
-            with st.spinner("Evaluating claim scenario..."):
+            with st.spinner("Analyzing your claim..."):
                 result = simulate_claim(policy_text, scenario)
                 st.info(result)
+                st.caption("⚠️ This is AI-generated, please verify officially.")
+                if st.radio("Was this helpful?", ("👍 Yes", "👎 No"), horizontal=True):
+                    st.write("✅ Thank you for your feedback!")
         else:
-            st.warning("Please upload a policy and enter a scenario.")
+            st.warning("Upload a policy and describe your scenario.")
 
-with tab5:
-    st.subheader("🚫 Exclusion Detector")
+# Tab 5: Exclusion Detector
+with tabs[4]:
+    st.subheader("❌ Exclusion Detector")
     if st.button("🔍 Analyze Exclusions"):
         if policy_text:
             with st.spinner("Scanning for exclusions..."):
                 result = detect_exclusions(policy_text)
                 st.warning(result)
+                if st.radio("Was this helpful?", ("👍 Yes", "👎 No"), horizontal=True):
+                    st.write("✅ Thank you for your feedback!")
         else:
             st.warning("Please upload a policy first.")
+
+# Footer
+st.markdown("""
+---
+📁 View on [GitHub](https://github.com/your-username/policybuddy) | © 2025 PolicyBuddy+ 
+_Disclaimer: All responses are AI-generated. Verify with your insurer before making decisions._
+""")
