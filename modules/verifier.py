@@ -1,6 +1,9 @@
 from modules.openrouter_llm import ask_openrouter
+from modules.utils import is_valid_policy_text
 
 def verify_explanation(policy_text: str, agent_text: str) -> str:
+    if not is_valid_policy_text(policy_text):
+        return "⚠️ This document doesn't appear to be a valid insurance policy. Please upload a proper policy PDF."
     prompt = (
         "You are an insurance compliance assistant.\n\n"
         "Compare the following:\n\n"
