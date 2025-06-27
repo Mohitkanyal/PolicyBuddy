@@ -5,6 +5,7 @@ from modules.qa_bot import ask_question
 from modules.verifier import verify_explanation
 from modules.claim_simulator import simulate_claim
 from modules.exclusion_detector import detect_exclusions
+from modules.utils import is_valid_policy_text
 
 
 st.set_page_config(page_title="PolicyBuddy+", page_icon="🤝", layout="centered")
@@ -32,7 +33,11 @@ with st.expander("📥 Upload your Insurance Policy (PDF)", expanded=True):
     policy_text = ""
     if uploaded_file:
         policy_text = extract_text_from_pdf(uploaded_file)
+    if not is_valid_policy_text(policy_text):
+        st.warning("⚠️ This PDF does not look like an insurance policy. Please check the file.")
+    else:
         st.success("✅ Policy document uploaded and parsed!")
+
 
 tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📄 Summary",
