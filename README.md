@@ -3,7 +3,7 @@
 An AI-powered assistant for insurance policyholders that helps demystify policy documents, verify agent claims, simulate claim scenarios, and detect potential exclusions. Powered by Mistral-7B via OpenRouter, Streamlit for UI, and PDF parsing with PyPDF2.
 
 🔗 Live Demo: [Click to Try PolicyBuddy+](https://policybuddy-cxne44tuvzb4g6fkvwpb8w.streamlit.app/)
-
+🔗 Video Demo:[Click to Open Demo Video](https://drive.google.com/file/d/11EK5IRJo0T3GpR-357F1d95AiwszkRDE/view)
 ---
 
 ## 📌 Problem Statement
